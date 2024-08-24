@@ -5,7 +5,7 @@ using PasswordManager.Backend.Data.Entities;
 
 namespace PasswordManager.Backend.Data
 {
-    public class ApplicationContext : IdentityDbContext<User, IdentityRole<int>, int>
+    public class ApplicationContext : IdentityDbContext<User, IdentityRole<int>, int> //
     {
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {

@@ -11,7 +11,7 @@ using PasswordManager.Backend.Data;
 namespace PasswordManager.Backend.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240823200936_InitDB")]
+    [Migration("20240823215927_InitDB")]
     partial class InitDB
     {
         /// <inheritdoc />
@@ -224,6 +224,10 @@ namespace PasswordManager.Backend.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");

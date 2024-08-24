@@ -10,6 +10,7 @@ namespace PasswordManager.Backend.Services
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<TokenService> _logger;
+        private const int _saltLength = 32;
 
         public TokenService(IConfiguration configuration, ILogger<TokenService> logger)
         {

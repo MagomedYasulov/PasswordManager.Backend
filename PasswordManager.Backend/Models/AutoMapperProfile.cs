@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PasswordManager.Backend.Data.Entities;
+using PasswordManager.Backend.DTOs;
 using System.Data;
 
 namespace PasswordManager.Backend.Models
@@ -8,12 +10,12 @@ namespace PasswordManager.Backend.Models
     {
         public AutoMapperProfile()
         {
-            //CreateMap<User, UserDTO>()
-            //    .ForMember(userDto => userDto.RoleName,
-            //        option => option.MapFrom(user => user.Role.Name))
-            //    .ForMember(userDto => userDto.IsAdmin,
-            //        option => option.MapFrom(user => user.Role.IsAdmin));
-            //CreateMap<Camera, CameraDTO>();
+            CreateMap<User, UserDTO>()
+                .ForMember(userDto => userDto.Login,
+                    option => option.MapFrom(user => user.UserName));
+                //.ForMember(userDto => userDto.IsAdmin,
+                //    option => option.MapFrom(user => user.Role.IsAdmin));
+                //CreateMap<Camera, CameraDTO>();
 
             //CreateMap<PageCamera, PageCameraDTO>();
             //CreateMap<Page, PageExtentionDTO>();

@@ -1,8 +1,6 @@
 
 using FluentValidation.AspNetCore;
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using PasswordManager.Backend.Extententions;
 using PasswordManager.Backend.Models;
 using PasswordManager.Backend.Services;
@@ -11,7 +9,6 @@ using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using PasswordManager.Backend.Middlewares;
 using PasswordManager.Backend.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using PasswordManager.Backend.Data.Entities;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +17,10 @@ using Microsoft.Extensions.Localization;
 using PasswordManager.Backend.Controllers;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PasswordManager.Backend
 {
@@ -55,7 +56,11 @@ namespace PasswordManager.Backend
             #endregion
 
             #region Authorization
-            builder.Services.AddAuthorization();
+            builder.Services.AddAuthorization(options => options.DefaultPolicy =
+            new AuthorizationPolicyBuilder
+                    (JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser()
+                .Build());
             #endregion
 
             #region Authentication
@@ -68,10 +73,10 @@ namespace PasswordManager.Backend
             {
                 options.Events = new JwtBearerEvents()
                 {
-                    //OnForbidden = JwtBearerEventsImplimintation.OnForbidden,
-                    //OnChallenge = JwtBearerEventsImplimintation.OnChallenge,
-                    //OnTokenValidated = JwtBearerEventsImplimintation.OnTokenValidated,
-                    //OnMessageReceived = JwtBearerEventsImplimintation.OnMessageReceived
+                    OnForbidden = JwtBearerEventsImplimintation.OnForbidden,
+                    OnChallenge = JwtBearerEventsImplimintation.OnChallenge,
+                    OnTokenValidated = JwtBearerEventsImplimintation.OnTokenValidated,
+                    OnMessageReceived = JwtBearerEventsImplimintation.OnMessageReceived
                 };
 
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -195,7 +200,7 @@ namespace PasswordManager.Backend
 
             var app = builder.Build();
 
-            app.UseCors("cors");
+           
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -213,11 +218,13 @@ namespace PasswordManager.Backend
 
             app.UseExceptionHandler();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors("cors");
 
             app.MapControllers();
 

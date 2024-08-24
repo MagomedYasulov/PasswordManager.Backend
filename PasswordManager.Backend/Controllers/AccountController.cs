@@ -22,25 +22,22 @@ namespace PasswordManager.Backend.Controllers
     [ApiController]
     public class AccountController : BaseController
     {
+        private readonly IPasswordHasher _passwordHasher;
         private readonly IConfiguration _configuration;
         private readonly ITokenService _tokenService;
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
 
         public AccountController(
-            SignInManager<User> signInManager, 
-            UserManager<User> userManager,
             ITokenService tokenService,
             IConfiguration configuration,
+            IPasswordHasher passwordHasher,
             IRepository repository, 
             IMapper mapper, 
             IStringLocalizer<BaseController> localizer) : base(repository, localizer, mapper)
 
         {
+            _passwordHasher = passwordHasher;
             _configuration = configuration;
             _tokenService = tokenService;
-            _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         /// <summary>
@@ -49,18 +46,10 @@ namespace PasswordManager.Backend.Controllers
         /// <param name="model"></param>
         /// <returns>Возвращет обьект с пользователем, access и refresh токенами</returns>
         [HttpPost("/api/v1/login")]
-        public async Task<ActionResult<AuthResponse>> Login(LoginViewModel model)
+        public ActionResult<AuthResponse> Login(LoginViewModel model)
         {
-            var managedUser = await _userManager.FindByNameAsync(model.Login);
-            if (managedUser == null)
-                return Unauthorized();
-
-            var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, model.Password);
-            if (!isPasswordValid)
-                return Unauthorized();
-
-            var user = _repository.GetOne<User>(u => u.UserName == model.Login);
-            if (user is null)
+            var user = _repository.GetOne<User>(u => u.Login == model.Login);
+            if (user == null || !_passwordHasher.VerifyHashedPassword(user.PasswordHash, model.Password))
                 return Unauthorized();
 
             var userDTO = _mapper.Map<UserDTO>(user);
@@ -95,32 +84,30 @@ namespace PasswordManager.Backend.Controllers
             HttpContext.Response.Headers.Append("accessToken", accessToken);
             HttpContext.Response.Headers.Append("refreshToken", token.RefreshToken);
 
-            return Ok(new AuthResponse { AccessToken = accessToken, RefreshToken = token.RefreshToken, User = userDTO });
+            return Ok(new AuthResponse { AccessToken = accessToken, RefreshToken = token.RefreshToken, User = userDTO, DeviceId = token.DeviceId });
         }
 
         [HttpPost("/api/v1/register")]
-        public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterViewModel model)
+        public ActionResult<AuthResponse> Register(RegisterViewModel model)
         {
-            var user = new User
+            if(_repository.Any<User>(u => u.NormalizedLogin == model.NormalizedLogin))
             {
-                UserName = model.Login,
-                Salt = GetSalt()
-            };
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
+                ModelState.AddModelError("error", _localizer["LoginAlreadyTaken"]);
+                return Conflict(ModelState);
             }
 
-            if (!result.Succeeded) 
-                return ValidationProblem(ModelState);
+            var user = new User
+            {
+                Login = model.Login,
+                PasswordHash = _passwordHasher.HashPassword(model.Password),
+                CreatedAt = DateTime.UtcNow,
+                NormalizedLogin = model.NormalizedLogin,
+                Salt = GetSalt()
+            };
+            _repository.Create(user);
+            _repository.Save();
 
-            var findUser = _repository.GetOne<User>(u => u.UserName == model.Login);
-            if (findUser == null) 
-                throw new Exception($"User {model.Login} not found");
-
-            return await Login(new LoginViewModel
+            return Login(new LoginViewModel
             {
                 Login = model.Login,
                 Password = model.Password,

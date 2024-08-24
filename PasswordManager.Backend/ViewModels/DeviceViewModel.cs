@@ -2,6 +2,6 @@
 {
     public class DeviceViewModel
     {
-        public string DeviceId { get; set; }
+        public string DeviceId { get; set; } = string.Empty;
     }
 }

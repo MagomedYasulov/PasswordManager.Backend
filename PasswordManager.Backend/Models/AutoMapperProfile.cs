@@ -10,9 +10,7 @@ namespace PasswordManager.Backend.Models
     {
         public AutoMapperProfile()
         {
-            CreateMap<User, UserDTO>()
-                .ForMember(userDto => userDto.Login,
-                    option => option.MapFrom(user => user.UserName));
+            CreateMap<User, UserDTO>();
                 //.ForMember(userDto => userDto.IsAdmin,
                 //    option => option.MapFrom(user => user.Role.IsAdmin));
                 //CreateMap<Camera, CameraDTO>();

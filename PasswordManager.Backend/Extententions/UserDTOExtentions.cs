@@ -19,7 +19,6 @@ namespace PasswordManager.Backend.Extententions
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimsIdentity.DefaultNameClaimType, userDTO.Login),
                 new Claim(ClaimTypes.Name, userDTO.Login),
-                new Claim(ClaimTypes.Email, userDTO.Email ?? ""),
                 new Claim(ClaimTypes.NameIdentifier, userDTO.Id.ToString()),
                 new Claim("salt", userDTO.Salt),
                 new Claim("user", JsonConvert.SerializeObject(userDTO, serializeSettings), JsonClaimValueTypes.Json)

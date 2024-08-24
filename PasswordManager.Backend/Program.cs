@@ -1,4 +1,3 @@
-
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using PasswordManager.Backend.Extententions;
@@ -9,7 +8,6 @@ using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using PasswordManager.Backend.Middlewares;
 using PasswordManager.Backend.Data;
 using Microsoft.EntityFrameworkCore;
-using PasswordManager.Backend.Data.Entities;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -19,7 +17,6 @@ using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 
 namespace PasswordManager.Backend
@@ -37,10 +34,6 @@ namespace PasswordManager.Backend
             #region DB
             builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<IRepository, EFRepository<ApplicationContext>>();
-            builder.Services.AddIdentity<User, IdentityRole<int>>()
-                            .AddEntityFrameworkStores<ApplicationContext>()
-                            .AddUserManager<UserManager<User>>()
-                            .AddSignInManager<SignInManager<User>>();
             #endregion
 
             #region Cors
@@ -56,11 +49,12 @@ namespace PasswordManager.Backend
             #endregion
 
             #region Authorization
-            builder.Services.AddAuthorization(options => options.DefaultPolicy =
-            new AuthorizationPolicyBuilder
-                    (JwtBearerDefaults.AuthenticationScheme)
-                .RequireAuthenticatedUser()
-                .Build());
+            builder.Services.AddAuthorization();
+            //builder.Services.AddAuthorization(options => options.DefaultPolicy =
+            //new AuthorizationPolicyBuilder
+            //        (JwtBearerDefaults.AuthenticationScheme)
+            //    .RequireAuthenticatedUser()
+            //    .Build());
             #endregion
 
             #region Authentication
@@ -198,9 +192,11 @@ namespace PasswordManager.Backend
 
             #endregion
 
-            var app = builder.Build();
+            #region PasswordHasher
+            builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            #endregion
 
-           
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

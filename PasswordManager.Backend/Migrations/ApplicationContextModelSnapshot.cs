@@ -17,6 +17,39 @@ namespace PasswordManager.Backend.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
+            modelBuilder.Entity("PasswordManager.Backend.Data.Entities.Credentilal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Service")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("URL")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Credentilals");
+                });
+
             modelBuilder.Entity("PasswordManager.Backend.Data.Entities.Token", b =>
                 {
                     b.Property<int>("Id")
@@ -86,6 +119,17 @@ namespace PasswordManager.Backend.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("PasswordManager.Backend.Data.Entities.Credentilal", b =>
+                {
+                    b.HasOne("PasswordManager.Backend.Data.Entities.User", "User")
+                        .WithMany("Credentials")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("PasswordManager.Backend.Data.Entities.Token", b =>
                 {
                     b.HasOne("PasswordManager.Backend.Data.Entities.User", "User")
@@ -99,6 +143,8 @@ namespace PasswordManager.Backend.Migrations
 
             modelBuilder.Entity("PasswordManager.Backend.Data.Entities.User", b =>
                 {
+                    b.Navigation("Credentials");
+
                     b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618

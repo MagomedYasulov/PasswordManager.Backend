@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 
 namespace PasswordManager.Backend
 {

@@ -144,6 +144,12 @@
   <data name="LoginAlreadyTaken" xml:space="preserve">
     <value>User with login '{0}' already exist.</value>
   </data>
+  <data name="NotFoundCredential" xml:space="preserve">
+    <value>Credential Not Found.</value>
+  </data>
+  <data name="NotFoundCredentialDescription" xml:space="preserve">
+    <value>Credential with id '{0}' not found.</value>
+  </data>
   <data name="RefreshTokenExpired" xml:space="preserve">
     <value>The refresh token expired at '{0}'</value>
   </data>

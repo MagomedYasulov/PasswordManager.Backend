@@ -144,6 +144,12 @@
   <data name="LoginAlreadyTaken" xml:space="preserve">
     <value>Пользователь с логином '{0}' уже существует.</value>
   </data>
+  <data name="NotFoundCredential" xml:space="preserve">
+    <value>Пароль не найден.</value>
+  </data>
+  <data name="NotFoundCredentialDescription" xml:space="preserve">
+    <value>Пароль с id '{0}' не найден.</value>
+  </data>
   <data name="RefreshTokenExpired" xml:space="preserve">
     <value>Срок действия токена обновления истек в '{0}'</value>
   </data>

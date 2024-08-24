@@ -10,6 +10,7 @@ namespace PasswordManager.Backend.Data.Entities
         public string Salt { get; set; } = string.Empty;
 
         public List<Token> RefreshTokens { get; set; } = [];
-        
+        public List<Credential> Credentials { get; set; } = [];
+
     }
 }

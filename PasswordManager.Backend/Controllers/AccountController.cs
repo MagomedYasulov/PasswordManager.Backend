@@ -92,7 +92,7 @@ namespace PasswordManager.Backend.Controllers
         {
             if(_repository.Any<User>(u => u.NormalizedLogin == model.NormalizedLogin))
             {
-                ModelState.AddModelError("error", _localizer["LoginAlreadyTaken"]);
+                ModelState.AddModelError("error", _localizer["LoginAlreadyTaken", model.Login]);
                 return Conflict(ModelState);
             }
 

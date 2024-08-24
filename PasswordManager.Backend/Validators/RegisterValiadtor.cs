@@ -8,7 +8,7 @@ namespace PasswordManager.Backend.Validators
     {
         public RegisterValiadtor(IStringLocalizer<BaseViewModel> localizer) 
         {
-            RuleFor(r => r.Password).NotEmpty().Password().WithMessage(localizer["InvalidPassword"]);
+            RuleFor(r => r.Password).NotEmpty().Password().WithMessage(localizer["PasswordRequirements"]);
             RuleFor(r => r.Login).NotEmpty().MinimumLength(4).MaximumLength(25);
         }
     }
